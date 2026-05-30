@@ -279,11 +279,6 @@ To meaningfully improve accuracy, the following are recommended:
 
 
 
-## Acknowledgements
-
-- Dataset source: Crop Recommendation using Soil Properties and Weather Prediction
-- NASA POWER API for seasonal weather data
-- scikit-learn documentation and best practices guides
 
 ---
 
