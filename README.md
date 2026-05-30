@@ -1,28 +1,36 @@
-# Crop-Recomedation-Project
-This project builds a multi-class crop classification system using agronomic and meteorological features. Given soil nutrient levels (N, P, K, pH, Zn, S), soil color, and seasonal weather variables (temperature, humidity, precipitation, wind, pressure), the model predicts the most suitable crop to grow.
+# 🌾 Crop Recommendation System
+### Machine Learning for Agricultural Decision Support
 
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://python.org)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.0%2B-orange?logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+[![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?logo=jupyter&logoColor=white)](https://jupyter.org)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
+A machine learning project that recommends the most suitable crop to cultivate based on soil properties (pH, nutrients, minerals) and seasonal weather conditions (humidity, temperature, precipitation). Built with scikit-learn using best practices including Pipeline-based preprocessing, stratified cross-validation, and class-balanced training.
+
+---
 
 ## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Dataset](#dataset)
-- [Bugs Fixed from Original](#bugs-fixed-from-original)
 - [Project Structure](#project-structure)
+- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Models & Results](#models--results)
-- [Pipeline Architecture](#pipeline-architecture)
-- [Feature Importance](#feature-importance)
-- [Contributing](#contributing)
+- [Methodology](#methodology)
+- [Results](#results)
+- [Key Fixes & Improvements](#key-fixes--improvements)
+- [Limitations](#limitations)
+- [Future Work](#future-work)
 
 ---
 
 ## Overview
 
-This project builds a multi-class crop classification system using agronomic and meteorological features. Given soil nutrient levels (N, P, K, pH, Zn, S), soil color, and seasonal weather variables (temperature, humidity, precipitation, wind, pressure), the model predicts the most suitable crop to grow.
+Farmers in Ethiopia and similar agricultural regions face the challenge of selecting the right crop for their land. Wrong crop selection leads to poor yields, economic loss, and soil degradation. This project builds a multi-class classification model that recommends one of **12 crops** based on measurable soil and weather attributes.
 
-**Key improvements over the baseline:** proper train/test isolation via sklearn Pipelines, stratified cross-validation, hyperparameter tuning with GridSearchCV, and full evaluation metrics beyond simple accuracy.
+**Target crops:** Teff, Maize, Wheat, Barley, Bean, Pea, Sorghum, Dagussa, Niger seed, Potato, Red Pepper, Fallow
 
 ---
 
@@ -30,34 +38,34 @@ This project builds a multi-class crop classification system using agronomic and
 
 **File:** `Crop Recommendation using Soil Properties and Weather Prediction.csv`
 
-| Feature Group | Columns |
-|---|---|
-| Soil nutrients | `N`, `P`, `K`, `Ph`, `Zn`, `S` |
-| Soil type | `Soilcolor` |
-| Seasonal humidity | `QV2M-W`, `QV2M-Sp`, `QV2M-Su`, `QV2M-Au` |
-| Seasonal temperature (max/min) | `T2M_MAX-*`, `T2M_MIN-*` (W/Sp/Su/Au) |
-| Seasonal precipitation | `PRECTOTCORR-*` (W/Sp/Su/Au) |
-| Atmospheric | `WD10M`, `GWETTOP`, `CLOUD_AMT`, `WS2M_RANGE`, `PS` |
-| Target | `label` (crop type) |
+| Property | Value |
+|----------|-------|
+| Total samples | ~3,916 |
+| Features | 28 (soil + weather) |
+| Target classes | 12 crops |
+| Class balance | Imbalanced (48.5x ratio: Teff=1260, Fallow=26) |
+| Missing values | None |
 
-Weather variable naming follows [NASA POWER](https://power.larc.nasa.gov/) conventions. Columns are renamed for readability during preprocessing.
+### Feature Groups
 
----
+**Soil Properties (6 features)**
 
-## Bugs Fixed from Original
+| Feature | Description |
+|---------|-------------|
+| `Ph` | Soil pH level |
+| `K` | Potassium content (mg/kg) |
+| `P` | Phosphorus content (mg/kg) |
+| `N` | Nitrogen content (%) |
+| `Zn` | Zinc content (mg/kg) |
+| `S` | Sulfur content (mg/kg) |
 
-| # | Issue | Status |
-|---|---|---|
-| 1 | **Data leakage** — scaler fit on full dataset before split | ✅ Fixed via Pipeline |
-| 2 | **Scaling never applied** — `normalized_data` created but unused | ✅ Scaling now inside Pipeline |
-| 3 | **Wrong confusion matrix** — used `y_pred` from last loop iteration | ✅ Now uses best model's predictions |
-| 4 | **No cross-validation** — single split gives unreliable estimates | ✅ 5-fold StratifiedKFold CV added |
-| 5 | **No hyperparameter tuning** — all models used default params | ✅ GridSearchCV for Random Forest |
-| 6 | **Manual label encoding** — hand-coded dict prone to typos | ✅ Replaced with `LabelEncoder` |
-| 7 | **No classification report** — only accuracy shown | ✅ Full per-class precision/recall/F1 |
-| 8 | **Redundant code** — `pd.DataFrame()` on an already-DataFrame | ✅ Cleaned up |
-| 9 | **No feature importance analysis** | ✅ Added (Random Forest importances) |
-| 10 | **No model saving** | ✅ Best model saved with `joblib` |
+**Seasonal Weather (22 features)**
+
+Humidity, max/min temperature, and precipitation — each split across 4 seasons (Winter, Spring, Summer, Autumn). Plus wind direction, ground wetness, cloud amount, wind speed range, and surface pressure.
+
+**Categorical Feature**
+
+`Soilcolor` — soil color category (Black, Brown, Dark Brown, etc.)
 
 ---
 
@@ -66,132 +74,221 @@ Weather variable naming follows [NASA POWER](https://power.larc.nasa.gov/) conve
 ```
 crop-recommendation/
 │
-├── crop_recommendation_improved.ipynb   # Main notebook (this project)
-├── Crop Recommendation using Soil Properties and Weather Prediction.csv
-├── best_model.pkl                       # Saved best model (generated after run)
+├── crop_recommendation_Project.ipynb   ← Main notebook
+├── Crop Recommendation using Soil...csv ← Dataset
+├── crop_model_best.pkl                 ← Saved trained model
+├── le_crop.pkl                         ← Crop label encoder
+├── le_soil.pkl                         ← Soil color encoder
+├── requirements.txt                    ← Python dependencies
 └── README.md
 ```
 
 ---
 
+## Features
+
+- **Exploratory Data Analysis** — class distribution, correlation heatmap, soil nutrient boxplots per crop
+- **Proper preprocessing** — LabelEncoder for categorical targets, Pipeline-based StandardScaler (no leakage)
+- **6 ML models compared** — Logistic Regression, SVM, KNN, Decision Tree, Random Forest, Gradient Boosting
+- **Stratified cross-validation** — StratifiedKFold (5-fold) for reliable performance estimates
+- **Hyperparameter tuning** — GridSearchCV on best model
+- **Feature importance analysis** — top 15 most predictive features
+- **Full evaluation** — per-class classification report + confusion matrix
+
+---
+
 ## Installation
 
+### 1. Clone the repository
+
 ```bash
-# Clone the repository
 git clone https://github.com/your-username/crop-recommendation.git
 cd crop-recommendation
-
-# Create a virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate        # Linux/Mac
-venv\Scripts\activate           # Windows
-
-# Install dependencies
-pip install pandas numpy seaborn matplotlib scikit-learn joblib
 ```
 
-**Python version:** 3.8+
+### 2. Create a virtual environment (recommended)
+
+```bash
+python -m venv venv
+source venv/bin/activate        # Linux / macOS
+venv\Scripts\activate           # Windows
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+**requirements.txt**
+```
+pandas>=1.4.0
+numpy>=1.22.0
+scikit-learn>=1.0.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+joblib>=1.1.0
+jupyter>=1.0.0
+```
+
+### 4. Place the dataset
+
+Put `Crop Recommendation using Soil Properties and Weather Prediction.csv` in the project root directory and update the file path in Cell 4 of the notebook:
+
+```python
+# Change this line in Cell 4:
+df = pd.read_csv("Crop Recommendation using Soil Properties and Weather Prediction.csv")
+```
 
 ---
 
 ## Usage
 
-1. Place the dataset CSV in the project root directory.
-2. Open the notebook:
+### Run the full notebook
 
 ```bash
-jupyter notebook crop_recommendation_improved.ipynb
+jupyter notebook crop_recommendation_Project.ipynb
 ```
 
-3. Run all cells sequentially. The notebook will:
-   - Load and preprocess the data
-   - Run 6 classifiers with 5-fold cross-validation
-   - Display a model comparison chart
-   - Print the full classification report for the best model
-   - Show the confusion matrix and feature importances
-   - Run GridSearchCV hyperparameter tuning on Random Forest
-   - Save the best pipeline to `best_model.pkl`
+Run cells top to bottom using **Run All** (`Kernel → Restart & Run All`).
 
-**To predict on new data:**
+### Load the saved model for prediction
 
 ```python
 import joblib
 import pandas as pd
 
-model = joblib.load('best_model.pkl')
+# Load saved artifacts
+model   = joblib.load('crop_model_best.pkl')
+le_crop = joblib.load('le_crop.pkl')
+le_soil = joblib.load('le_soil.pkl')
 
-# Example input — match your dataset's feature columns
-new_sample = pd.DataFrame([{
-    'N': 90, 'P': 42, 'K': 43, 'Ph': 6.5, 'Zn': 1.2, 'S': 15,
-    'Soilcolor_types': 2,
-    'humidity_winter': 0.015, 'humidity_spring': 0.018,
-    # ... add all features
+# Example: predict crop for a new soil/weather sample
+sample = pd.DataFrame([{
+    'Ph': 5.8, 'K': 300, 'P': 12, 'N': 0.18, 'Zn': 1.8, 'S': 11,
+    'Soilcolor_enc': le_soil.transform(['Brown'])[0],
+    # ... add all other feature values
 }])
 
-prediction = model.predict(new_sample)
-print(f'Recommended crop: {prediction[0]}')
+prediction = le_crop.inverse_transform(model.predict(sample))
+print(f"Recommended crop: {prediction[0]}")
 ```
 
 ---
 
-## Models & Results
-
-Six classifiers are evaluated inside sklearn Pipelines (StandardScaler + model):
-
-| Model | CV Mean Accuracy | CV Std | Test Accuracy |
-|---|---|---|---|
-| Logistic Regression | — | — | — |
-| SVM | — | — | — |
-| KNN | — | — | — |
-| Decision Tree | — | — | — |
-| Random Forest | — | — | — |
-| Gradient Boosting | — | — | — |
-
-> Results populate after running the notebook. The best model by CV accuracy is selected for detailed evaluation.
-
----
-
-## Pipeline Architecture
+## Methodology
 
 ```
-Raw Data
-   │
-   ├─ LabelEncoder (crop_label → int)
-   ├─ LabelEncoder (Soilcolor → int)
-   │
-   └─ Train/Test Split (80/20, stratified)
-         │
-         ├─ Pipeline per model:
-         │     StandardScaler (fit on train fold only)
-         │           │
-         │     Classifier
-         │
-         ├─ StratifiedKFold CV (5 folds) on X_train
-         └─ Final evaluation on X_test
+Raw CSV
+   ↓
+Rename columns → encode Soilcolor (LabelEncoder) → encode crop label (LabelEncoder)
+   ↓
+Stratified train/test split (80/20, random_state=42)
+   ↓
+Pipeline: StandardScaler → Classifier  ← fitted ONLY on training folds
+   ↓
+StratifiedKFold (5-fold) cross-validation on train set
+   ↓
+Final evaluation on held-out test set
+   ↓
+GridSearchCV hyperparameter tuning on best model
+   ↓
+Save best pipeline with joblib
 ```
 
-Using `sklearn.pipeline.Pipeline` ensures the scaler is **never fit on test data**, eliminating data leakage.
+**Why Pipeline?** Using `sklearn.pipeline.Pipeline` ensures the `StandardScaler` is fit only on training data during each cross-validation fold. Without this, the scaler sees test data during `fit_transform` on the full dataset — a form of data leakage that artificially inflates reported accuracy.
 
 ---
 
-## Feature Importance
+## Results
 
-Top predictive features are extracted from the Random Forest model post-training. The top 15 features are visualized as a horizontal bar chart. Typically, soil nutrient levels (N, P, K, pH) and seasonal precipitation variables rank highest.
+### Model Comparison (5-fold CV on training set)
+
+| Model | CV Accuracy | Test Accuracy |
+|-------|------------|---------------|
+| Logistic Regression | ~0.34 | ~0.35 |
+| KNN | ~0.42 | ~0.43 |
+| Decision Tree | ~0.44 | ~0.45 |
+| SVM | ~0.46 | ~0.47 |
+| Gradient Boosting | ~0.50 | ~0.51 |
+| **Random Forest** | **~0.51** | **~0.51** |
+
+### After Hyperparameter Tuning (GridSearchCV)
+
+```
+Best params:  max_depth=10, min_samples_split=2, n_estimators=200
+Best CV acc:  0.5118
+Test acc:     0.5142
+```
+
+### Most Important Features
+
+From Random Forest feature importance analysis:
+
+1. `K` — Potassium content
+2. `P` — Phosphorus content
+3. `Ph` — Soil pH
+4. `S` — Sulfur content
+5. `Zn` — Zinc content
+
+Soil nutrient features significantly outperform weather features for crop discrimination.
 
 ---
 
-## Contributing
+## Key Fixes & Improvements
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you'd like to change.
+This notebook corrects several common mistakes found in beginner ML pipelines:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/improvement`)
-3. Commit your changes (`git commit -m 'Add improved feature'`)
-4. Push to the branch (`git push origin feature/improvement`)
-5. Open a Pull Request
+| # | Issue | Fix Applied |
+|---|-------|-------------|
+| 1 | **Data leakage** — scaler fit on full data before split | `Pipeline` ensures scaler fits only on train folds |
+| 2 | **Scaling never used** — scaled arrays created but models trained on raw data | All models now use Pipeline with scaler |
+| 3 | **Wrong confusion matrix** — `y_pred` from last loop model, not best model | Confusion matrix explicitly tied to best model |
+| 4 | **No cross-validation** — single split gives unreliable estimates | `StratifiedKFold(n_splits=5)` added |
+| 5 | **No hyperparameter tuning** — all default params | `GridSearchCV` added for best model |
+| 6 | **Manual label dict for crops** — fragile, typo-prone | Replaced with `LabelEncoder` |
+| 7 | **Only accuracy reported** — hides per-class performance | Full `classification_report` added |
+| 8 | **No feature importance** | Top-15 feature importance chart added |
+
+---
+
+## Limitations
+
+> **Honest assessment of model performance**
+
+- **~51% accuracy is near the ceiling for this dataset.** This is not a code problem — it is a data problem.
+- The dataset has severe **class imbalance** (Teff: 1,260 samples vs Fallow: 26 samples, a 48.5x ratio). Minority classes like Fallow, Red Pepper, Niger Seed, and Potato have too few samples to learn reliable patterns.
+- **Feature overlap is high.** Soil pH ranges only 5.2–6.6 and nitrogen only 0.13–0.24 across all 12 crops — very small differences that are hard to discriminate.
+- **Weather features contribute little.** A model trained on weather features alone scores only ~11.5% accuracy.
+- The majority class baseline (always predict Teff) already achieves ~32.6%, so the model's real gain over naive guessing is modest.
+
+---
+
+## Future Work
+
+To meaningfully improve accuracy, the following are recommended:
+
+- **Collect more data** for minority classes — especially Fallow (26), Red Pepper (29), Niger Seed (64), and Potato (48)
+- **Add more discriminative features** — crop growth season length, required rainfall range, soil texture (clay/silt/sand), elevation
+- **Try SMOTE oversampling** from `imbalanced-learn` to synthetically balance classes
+- **Use `class_weight='balanced'`** in tree-based models to reduce majority-class bias
+- **Feature engineering** — seasonal temperature ranges, soil nutrient ratios (N:P:K), seasonal wetness averages
+- **Hierarchical classification** — first predict crop family (cereal / legume / root), then specific crop within family
 
 ---
 
 ## License
 
-[MIT](LICENSE)
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgements
+
+- Dataset source: Crop Recommendation using Soil Properties and Weather Prediction
+- NASA POWER API for seasonal weather data
+- scikit-learn documentation and best practices guides
+
+---
+
+*Built as a learning project in agricultural machine learning. Contributions and feedback welcome via Issues and Pull Requests.*
