@@ -275,13 +275,9 @@ To meaningfully improve accuracy, the following are recommended:
 - **Feature engineering** — seasonal temperature ranges, soil nutrient ratios (N:P:K), seasonal wetness averages
 - **Hierarchical classification** — first predict crop family (cereal / legume / root), then specific crop within family
 
----
 
-## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
----
 
 ## Acknowledgements
 
