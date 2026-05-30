@@ -4,7 +4,7 @@
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://python.org)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.0%2B-orange?logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?logo=jupyter&logoColor=white)](https://jupyter.org)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
 
 A machine learning project that recommends the most suitable crop to cultivate based on soil properties (pH, nutrients, minerals) and seasonal weather conditions (humidity, temperature, precipitation). Built with scikit-learn using best practices including Pipeline-based preprocessing, stratified cross-validation, and class-balanced training.
 
