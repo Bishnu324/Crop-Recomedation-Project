@@ -140,41 +140,8 @@ Put `Crop Recommendation using Soil Properties and Weather Prediction.csv` in th
 df = pd.read_csv("Crop Recommendation using Soil Properties and Weather Prediction.csv")
 ```
 
----
 
-## Usage
 
-### Run the full notebook
-
-```bash
-jupyter notebook crop_recommendation_Project.ipynb
-```
-
-Run cells top to bottom using **Run All** (`Kernel → Restart & Run All`).
-
-### Load the saved model for prediction
-
-```python
-import joblib
-import pandas as pd
-
-# Load saved artifacts
-model   = joblib.load('crop_model_best.pkl')
-le_crop = joblib.load('le_crop.pkl')
-le_soil = joblib.load('le_soil.pkl')
-
-# Example: predict crop for a new soil/weather sample
-sample = pd.DataFrame([{
-    'Ph': 5.8, 'K': 300, 'P': 12, 'N': 0.18, 'Zn': 1.8, 'S': 11,
-    'Soilcolor_enc': le_soil.transform(['Brown'])[0],
-    # ... add all other feature values
-}])
-
-prediction = le_crop.inverse_transform(model.predict(sample))
-print(f"Recommended crop: {prediction[0]}")
-```
-
----
 
 ## Methodology
 
