@@ -187,6 +187,7 @@ Best params:  max_depth=10, min_samples_split=2, n_estimators=200
 Best CV acc:  0.5118
 Test acc:     0.5142
 ```
+<img width="1389" height="590" alt="Model comperision" src="https://github.com/user-attachments/assets/b30a0556-15ed-42b3-929b-cfb5f1a475b1" />
 
 ### Most Important Features
 
