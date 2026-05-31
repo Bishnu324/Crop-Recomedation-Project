@@ -187,7 +187,7 @@ Best params:  max_depth=10, min_samples_split=2, n_estimators=200
 Best CV acc:  0.5118
 Test acc:     0.5142
 ```
-https://github.com/Bishnu324/Crop-Recomedation-Project/blob/main/Model%20comperision.png
+
 ### Most Important Features
 
 From Random Forest feature importance analysis:
